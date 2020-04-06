@@ -1,0 +1,114 @@
+version: '3'
+
+volumes:
+  
+  slic:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/slic
+  
+  pyramblings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/pyramblings
+
+  pgdata:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/pgdata
+  
+  portainer_data:
+
+# manage namespaces use 4xxx port series
+# ide namespaces use 3xxx port series
+services:
+  slic:
+    image: java-ide:1.0
+    volumes: 
+      - slic:/home/project
+    labels:
+      - "traefik.manage.rule=PathPrefixStrip:/slic/"
+      - "traefik.port=3000"
+
+  pyramblings:
+    image: python-ide:1.0
+    volumes:
+      - pyramblings:/home/project
+    labels:
+      - "traefik.ide.rule=PathPrefixStrip:/py/"
+      - "traefik.port=3000"
+  
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 4000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    labels:
+      - "traefik.manage.rule=PathPrefixStrip:/"
+      - "traefik.port=9000"
+  
+  postgres:
+    image: postgres:9.6
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=welcome
+      - POSTGRES_USER=pgadmin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    labels:
+      - "traefik.manage.rule=PathPrefixStrip:/pgadmin/"
+      - "traefik.port=8080"
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=rmqadmin
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - 15672:15672
+
+  hazelcast:
+    image: hazelcast/hazelcast
+    environment:
+      - JAVA_OPTS="-Dhazelcast.local.publicAddress=hazelcast:5701"
+
+  reverse-proxy:
+    # The official v2.0 Traefik docker image
+    image: traefik
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock 
+
+  redis:
+    image: redis
+  
+  dbproxy:
+    image: pythonsshporter:1.0
+    restart: always
+    environment: 
+      - COMMA_SEPARATED_FORWARDED_PORTS=5432
+      - SSH_SERVER=$CLUSTER_IP_ADDRESS
