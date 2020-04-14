@@ -8,15 +8,22 @@ volumes:
       type: none
       device: $BASEDIR/volumes/devstack
     labels: 
-      - "devstack.type=github"
-      - "devstack.repository.url="
-  
+      - "devstack.volume.type=REPOSITORY"
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/devstack.git"
+      - "devstack.repository.branch=master"
+
   algorithms:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: $BASEDIR/volumes/Algorithms
+  labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/Algorithms.git"
+      - "devstack.repository.branch=master"
   
   educative:
     driver: local
@@ -24,6 +31,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/educative
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/educative.git"
+      - "devstack.repository.branch=master"
   
   python-ramblings:
     driver: local
@@ -31,6 +43,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/python-ramblings
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/python-ramblings.git"
+      - "devstack.repository.branch=master"
   
   go-ramblings:
     driver: local
@@ -38,6 +55,12 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/go-ramblings
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/go-ramblings.git"
+      - "devstack.repository.branch=master"
+
 
   java-ramblings:
     driver: local
@@ -45,6 +68,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/java-ramblings
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/java-ramblings.git"
+      - "devstack.repository.branch=master"
   
   rust-ramblings:
     driver: local
@@ -52,6 +80,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/rust-ramblings
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/rust-ramblings.git"
+      - "devstack.repository.branch=master"
   
   slic:
     driver: local
@@ -59,6 +92,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/slic
+    labels:
+      - "devstack.volume.type=REPOSITORY" 
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/slic.git"
+      - "devstack.repository.branch=master"
 
   pgdata:
     driver: local
@@ -66,13 +104,21 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/pgdata
-  
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/pgdata"
+
   portainer_data:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: $BASEDIR/volumes/portainerdata
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/portainerdata"
   
   hazelcast_resources:
     driver: local
@@ -80,13 +126,22 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/hazelcast_resources
-  
+    labels:
+      - "devstack.volume.type=CONFIG" 
+      - "devstack.config.type=local_folder"
+      - "devstack.config.sourcepath=../hazelcast_resources"
+      - "devstack.config.path=$BASEDIR/volumes/hazelcast_resources"
+
   mancenter:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: $BASEDIR/volumes/mancenter
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/mancenter"
   
   cassandra-vol1:
     driver: local
@@ -94,6 +149,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/cassandra/vol1
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/cassandra/vol1"
   
   cassandra-vol2:
     driver: local
@@ -101,6 +160,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/cassandra/vol2
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/cassandra/vol2"
 
   cassandra-vol3:
     driver: local
@@ -108,6 +171,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/cassandra/vol3
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/cassandra/vol3"
 
   zoo-vol1:
     driver: local
@@ -115,6 +182,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo/vol1
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo/vol1"
 
   zoo-vol2:
     driver: local
@@ -122,6 +193,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo/vol2
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo/vol2"
 
   zoo-vol3:
     driver: local
@@ -129,6 +204,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo/vol3
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo/vol3"
 
   zoo-log-vol1:
     driver: local
@@ -136,6 +215,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo-log/vol1
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo-log/vol1"
 
   zoo-log-vol2:
     driver: local
@@ -143,6 +226,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo-log/vol2
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo-log/vol2"
+    
 
   zoo-log-vol3:
     driver: local
@@ -150,6 +238,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/zoo-log/vol3
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/zoo-log/vol3"
 
   kafka-vol1:
     driver: local
@@ -157,6 +249,11 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/kafka/vol1
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/kafka/vol1"
+    
 
   kafka-vol2:
     driver: local
@@ -164,6 +261,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/kafka/vol2
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/kafka/vol2"
 
   kafka-vol3:
     driver: local
@@ -171,6 +272,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/kafka/vol3
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/kafka/vol3"
   
   elastic-data1:
     driver: local
@@ -178,6 +283,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/elastic/vol1
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/elastic/vol1"
 
   elastic-data2:
     driver: local
@@ -185,6 +294,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/elastic/vol2
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/elastic/vol1"
 
   elastic-data3:
     driver: local
@@ -192,6 +305,10 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/elastic/vol3
+    labels:
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/elastic/vol1"
 
 # manage namespaces use 4xxx port series
 # ide namespaces use 3xxx port series
@@ -204,6 +321,11 @@ services:
     volumes:
       - devstack:/home/project
     labels:
+      - "devstack.service.type=IDE"
+      - "devstack.ide.type=python"
+      - "devstack.ide.random_port=true"
+      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
+      - "devstack.ide.laptopmode=true"
       - "traefik.http.routers.devstack.rule=PathPrefix(`/devstack/`)"
       - "traefik.http.middlewares.devstack.stripprefix.prefixes=/devstack/"
       - "traefik.port=3000"
@@ -219,6 +341,11 @@ services:
     volumes:
       - algorithms:/home/project
     labels:
+      - "devstack.service.type=IDE"
+      - "devstack.ide.type=java"
+      - "devstack.ide.random_port=true"
+      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
+      - "devstack.ide.laptopmode=true"
       - "traefik.http.routers.algorithms.rule=PathPrefix(`/algorithms/`)"
       - "traefik.http.middlewares.algorithms.stripprefix.prefixes=/algorithms/"
       - "traefik.port=3000"
@@ -234,6 +361,11 @@ services:
     volumes:
       - educative:/home/project
     labels:
+      - "devstack.service.type=IDE"
+      - "devstack.ide.type=java"
+      - "devstack.ide.random_port=true"
+      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
+      - "devstack.ide.laptopmode=true"
       - "traefik.http.routers.educative.rule=PathPrefix(`/educative/`)"
       - "traefik.http.middlewares.educative.stripprefix.prefixes=/educative/"
       - "traefik.port=3000"
