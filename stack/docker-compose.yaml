@@ -1,6 +1,57 @@
 version: '3'
 
 volumes:
+  devstack:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/devstack
+    labels: 
+      - "devstack.type=github"
+      - "devstack.repository.url="
+  
+  algorithms:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/Algorithms
+  
+  educative:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/educative
+  
+  python-ramblings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/python-ramblings
+  
+  go-ramblings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/go-ramblings
+
+  java-ramblings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/java-ramblings
+  
+  rust-ramblings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/rust-ramblings
   
   slic:
     driver: local
@@ -8,13 +59,6 @@ volumes:
       o: bind
       type: none
       device: $BASEDIR/volumes/slic
-  
-  pyramblings:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: $BASEDIR/volumes/pyramblings
 
   pgdata:
     driver: local
@@ -24,26 +68,230 @@ volumes:
       device: $BASEDIR/volumes/pgdata
   
   portainer_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/portainerdata
+  
+  hazelcast_resources:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/hazelcast_resources
+  
+  mancenter:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/mancenter
+  
+  cassandra-vol1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/cassandra/vol1
+  
+  cassandra-vol2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/cassandra/vol2
+
+  cassandra-vol3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/cassandra/vol3
+
+  zoo-vol1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo/vol1
+
+  zoo-vol2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo/vol2
+
+  zoo-vol3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo/vol3
+
+  zoo-log-vol1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo-log/vol1
+
+  zoo-log-vol2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo-log/vol2
+
+  zoo-log-vol3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/zoo-log/vol3
+
+  kafka-vol1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/kafka/vol1
+
+  kafka-vol2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/kafka/vol2
+
+  kafka-vol3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/kafka/vol3
+  
+  elastic-data1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/elastic/vol1
+
+  elastic-data2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/elastic/vol2
+
+  elastic-data3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/elastic/vol3
 
 # manage namespaces use 4xxx port series
 # ide namespaces use 3xxx port series
 services:
-  slic:
-    image: java-ide:1.0
-    volumes: 
-      - slic:/home/project
-    labels:
-      - "traefik.manage.rule=PathPrefixStrip:/slic/"
-      - "traefik.port=3000"
 
-  pyramblings:
+  devstack:
     image: python-ide:1.0
+    ports:
+      - "3001:3000"
     volumes:
-      - pyramblings:/home/project
+      - devstack:/home/project
     labels:
-      - "traefik.ide.rule=PathPrefixStrip:/py/"
+      - "traefik.http.routers.devstack.rule=PathPrefix(`/devstack/`)"
+      - "traefik.http.middlewares.devstack.stripprefix.prefixes=/devstack/"
+      - "traefik.port=3000"
+      #- "traefik.http.middlewares.acp_common_utils.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
+      #- "traefik.http.middlewares.acp_common_utils.basicauth.removeheader=true"
+    #extra_hosts:
+    #  - "dockerhost:$DOCKERHOST"
+
+  algorithms:
+    image: java-ide:1.0
+    ports:
+      - "3002:3000"
+    volumes:
+      - algorithms:/home/project
+    labels:
+      - "traefik.http.routers.algorithms.rule=PathPrefix(`/algorithms/`)"
+      - "traefik.http.middlewares.algorithms.stripprefix.prefixes=/algorithms/"
+      - "traefik.port=3000"
+      #- "traefik.http.middlewares.visualrf.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
+      #- "traefik.http.middlewares.visualrf.basicauth.removeheader=true"
+    #extra_hosts:
+    #  - "dockerhost:$DOCKERHOST"
+
+  educative:
+    image: java-ide:1.0
+    ports:
+      - "3003:3000"
+    volumes:
+      - educative:/home/project
+    labels:
+      - "traefik.http.routers.educative.rule=PathPrefix(`/educative/`)"
+      - "traefik.http.middlewares.educative.stripprefix.prefixes=/educative/"
+      - "traefik.port=3000"
+      #- "traefik.http.middlewares.monitoring.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
+      #- "traefik.http.middlewares.monitoring.basicauth.removeheader=true"
+    #extra_hosts:
+    #  - "dockerhost:$DOCKERHOST"
+
+  python-ramblings:
+    image: python-ide:1.0
+    ports:
+      - "3004:3000"
+    volumes:
+      - python-ramblings:/home/project
+      - libs:/home/libraries:ro
+      - conf:/home/configs:ro
+    labels:
+      - "traefik.http.routers.python-ramblings.rule=PathPrefix(`/python/`)"
+      - "traefik.http.middlewares.python-ramblings.stripprefix.prefixes=/python/"
+      - "traefik.port=3000"
+      #- "traefik.http.middlewares.customer_setup.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
+      #- "traefik.http.middlewares.customer_setup.basicauth.removeheader=true"
+    #extra_hosts:
+    #  - "dockerhost:$DOCKERHOST"
+  
+  go-ramblings:
+    image: go-ide:1.0
+    ports:
+      - "3005:3000"
+    volumes:
+      - go-ramblings:/home/project
+    labels:
+      - "traefik.http.routers.go-ramblings.rule=PathPrefix(`/go/`)"
+      - "traefik.http.middlewares.go-ramblings.stripprefix.prefixes=/go/"
       - "traefik.port=3000"
   
+  java-ramblings:
+    image: java-ide:1.0
+    ports:
+      - "3006:3000"
+    volumes:
+      - java-ramblings:/home/project
+    labels:
+      - "traefik.http.routers.java-ramblings.rule=PathPrefix(`/java/`)"
+      - "traefik.http.middlewares.java-ramblings.stripprefix.prefixes=/java/"
+      - "traefik.port=3000"
+
+  slic:
+    image: java-ide:1.0
+    ports:
+      - "3007:3000"
+    volumes:
+      - slic:/home/project
+    labels:
+      - "traefik.http.routers.slic.rule=PathPrefix(`/java/`)"
+      - "traefik.http.middlewares.slic.stripprefix.prefixes=/java/"
+      - "traefik.port=3000"
+
   portainer:
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock
@@ -54,61 +302,247 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     labels:
-      - "traefik.manage.rule=PathPrefixStrip:/"
+      - "traefik.http.routers.portainer.rule=PathPrefix(`/portainer/`)"
+      - "traefik.http.middlewares.portainer.stripprefix.prefixes=/portainer/"
       - "traefik.port=9000"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    labels:
+      - "traefik.http.routers.adminer.rule=PathPrefix(`/pgadmin/`)"
+      - "traefik.http.middlewares.adminer.stripprefix.prefixes=/pgadmin/"
+      - "traefik.port=8080"
+    #extra_hosts:
+    #  - "dockerhost:$DOCKERHOST"
   
   postgres:
     image: postgres:9.6
     restart: always
     environment:
-      - POSTGRES_PASSWORD=welcome
-      - POSTGRES_USER=pgadmin
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  adminer:
-    image: adminer
-    restart: always
-    environment:
-      - ADMINER_DEFAULT_SERVER=postgres
-    labels:
-      - "traefik.manage.rule=PathPrefixStrip:/pgadmin/"
-      - "traefik.port=8080"
 
   rabbitmq:
     image: rabbitmq:management
     restart: always
     environment:
-      - RABBITMQ_DEFAULT_USER=rmqadmin
-      - RABBITMQ_DEFAULT_PASS=password
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
     ports:
       - 15672:15672
 
-  hazelcast:
-    image: hazelcast/hazelcast
-    environment:
-      - JAVA_OPTS="-Dhazelcast.local.publicAddress=hazelcast:5701"
-
-  reverse-proxy:
-    # The official v2.0 Traefik docker image
-    image: traefik
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
-    ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock 
-
   redis:
     image: redis
+
+  hazelcast-node1:
+    image: hazelcast/hazelcast
+    volumes:
+        - hazelcast_resources:/configFolder
+    environment:
+        - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dhazelcast.mancenter.url=http://mancenter:8080/mancenter -Dgroup.name=hz-compose -Dgroup.password=s3crEt
+    links:
+        - "management-center:mancenter"
   
-  dbproxy:
-    image: pythonsshporter:1.0
-    restart: always
-    environment: 
-      - COMMA_SEPARATED_FORWARDED_PORTS=5432
-      - SSH_SERVER=$CLUSTER_IP_ADDRESS
+  hazelcast-node2:
+    image: hazelcast/hazelcast
+    volumes:
+        - hazelcast_resources:/configFolder
+    environment:
+        - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dhazelcast.mancenter.url=http://mancenter:8080/mancenter -Dgroup.name=hz-compose -Dgroup.password=s3crEt
+    links:
+        - "management-center:mancenter"
+
+  hazelcast-node3:
+    image: hazelcast/hazelcast
+    volumes:
+        - hazelcast_resources:/configFolder
+    environment:
+        - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dhazelcast.mancenter.url=http://mancenter:8080/mancenter -Dgroup.name=hz-compose -Dgroup.password=s3crEt
+    links:
+        - "management-center:mancenter"
+
+  #management center
+  management-center:
+    image: hazelcast/management-center
+    # persisting mancenter users db folder to local disk
+    volumes:
+        - mancenter:/mancenter
+    environment:
+        - MANCENTER_DATA=/mancenter
+        # enable REST interface on management center
+        # http://docs.hazelcast.org/docs/latest-development/manual/html/Management/Clustered_REST_via_Management_Center.html
+        - JAVA_OPTS=-Dhazelcast.mc.rest.enabled=true
+    ports:
+        - 8080:8080
+
+  cassandra-node1:
+    image: bitnami/cassandra:latest
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=password123
+    volumes:
+      - cassandra-vol1:/bitnami
+
+  cassandra-node2:
+    image: bitnami/cassandra:latest
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=password123
+    volumes:
+      - cassandra-vol2:/bitnami
+
+  cassandra-node3:
+    image: bitnami/cassandra:latest
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=password123
+    volumes:
+      - cassandra-vol3:/bitnami
+
+  zoo1:
+    image: zookeeper:3.4.9
+    hostname: zoo1
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo-vol1:/data
+      - zoo-log-vol1:/datalog
+
+  zoo2:
+    image: zookeeper:3.4.9
+    hostname: zoo2
+    environment:
+        ZOO_MY_ID: 2
+        ZOO_PORT: 2182
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo-vol2:/data
+      - zoo-log-vol2:/datalog
+
+  zoo3:
+    image: zookeeper:3.4.9
+    hostname: zoo3
+    environment:
+        ZOO_MY_ID: 3
+        ZOO_PORT: 2183
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo-vol3:/data
+      - zoo-log-vol3:/datalog
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.4.1
+    hostname: kafka1
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+    volumes:
+      - kafka-vol1:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+  kafka2:
+    image: confluentinc/cp-kafka:5.4.1
+    hostname: kafka2
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka2:19093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+    volumes:
+      - kafka-vol2:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+  kafka3:
+    image: confluentinc/cp-kafka:5.4.1
+    hostname: kafka3
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka3:19094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+    volumes:
+      - kafka-vol3:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+  
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data1:/usr/share/elasticsearch/data
+    
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data2:/usr/share/elasticsearch/data
+    
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data3:/usr/share/elasticsearch/data
