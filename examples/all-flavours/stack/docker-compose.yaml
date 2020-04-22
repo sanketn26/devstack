@@ -1,6 +1,42 @@
 version: '3'
 
 volumes:
+  tools:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/tools
+    labels:
+      - "devstack.istoolsvol=true" 
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/tools"
+  
+  gitsshvol:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/gitssh
+    labels:
+      - "devstack.isgitsshvol=true" 
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/gitssh"
+  
+  kubevol:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/kube
+    labels:
+      - "devstack.iskubevol=true" 
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/kube"
+
   devstack:
     driver: local
     driver_opts:
@@ -310,8 +346,7 @@ volumes:
       - "devstack.storage.type=local_folder"
       - "devstack.storage.path=$BASEDIR/volumes/elastic/vol1"
 
-# manage namespaces use 4xxx port series
-# ide namespaces use 3xxx port series
+
 services:
 
   devstack:
@@ -323,16 +358,9 @@ services:
     labels:
       - "devstack.service.type=IDE"
       - "devstack.ide.type=python"
-      - "devstack.ide.random_port=true"
-      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
-      - "devstack.ide.laptopmode=true"
-      - "traefik.http.routers.devstack.rule=PathPrefix(`/devstack/`)"
-      - "traefik.http.middlewares.devstack.stripprefix.prefixes=/devstack/"
-      - "traefik.port=3000"
-      #- "traefik.http.middlewares.acp_common_utils.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
-      #- "traefik.http.middlewares.acp_common_utils.basicauth.removeheader=true"
-    #extra_hosts:
-    #  - "dockerhost:$DOCKERHOST"
+      - "devstack.ide.configure.toolsvol=true"
+      - "devstack.ide.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
 
   algorithms:
     image: java-ide:1.0
@@ -341,18 +369,12 @@ services:
     volumes:
       - algorithms:/home/project
     labels:
-      - "devstack.service.type=IDE"
-      - "devstack.ide.type=java"
-      - "devstack.ide.random_port=true"
-      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
-      - "devstack.ide.laptopmode=true"
-      - "traefik.http.routers.algorithms.rule=PathPrefix(`/algorithms/`)"
-      - "traefik.http.middlewares.algorithms.stripprefix.prefixes=/algorithms/"
-      - "traefik.port=3000"
-      #- "traefik.http.middlewares.visualrf.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
-      #- "traefik.http.middlewares.visualrf.basicauth.removeheader=true"
-    #extra_hosts:
-    #  - "dockerhost:$DOCKERHOST"
+      - "devstack.service.type=ATTACH_VSCODE"
+      - "devstack.attach_vscode.type=java"
+      - "devstack.attach_vscode.configure.toolsvol=true"
+      - "devstack.attach_vscode.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
+
 
   educative:
     image: java-ide:1.0
@@ -363,16 +385,9 @@ services:
     labels:
       - "devstack.service.type=IDE"
       - "devstack.ide.type=java"
-      - "devstack.ide.random_port=true"
-      - "devstack.ide.configure=GIT;KUBECTL;STERN;KUBEFWD;POSTGRESCLIENT"
-      - "devstack.ide.laptopmode=true"
-      - "traefik.http.routers.educative.rule=PathPrefix(`/educative/`)"
-      - "traefik.http.middlewares.educative.stripprefix.prefixes=/educative/"
-      - "traefik.port=3000"
-      #- "traefik.http.middlewares.monitoring.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
-      #- "traefik.http.middlewares.monitoring.basicauth.removeheader=true"
-    #extra_hosts:
-    #  - "dockerhost:$DOCKERHOST"
+      - "devstack.ide.configure.toolsvol=true"
+      - "devstack.ide.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
 
   python-ramblings:
     image: python-ide:1.0
@@ -380,16 +395,12 @@ services:
       - "3004:3000"
     volumes:
       - python-ramblings:/home/project
-      - libs:/home/libraries:ro
-      - conf:/home/configs:ro
     labels:
-      - "traefik.http.routers.python-ramblings.rule=PathPrefix(`/python/`)"
-      - "traefik.http.middlewares.python-ramblings.stripprefix.prefixes=/python/"
-      - "traefik.port=3000"
-      #- "traefik.http.middlewares.customer_setup.basicauth.users=dev:$$apr1$$YsIYideY$$8DgUrvjemPexYNfywe9Tz/"
-      #- "traefik.http.middlewares.customer_setup.basicauth.removeheader=true"
-    #extra_hosts:
-    #  - "dockerhost:$DOCKERHOST"
+      - "devstack.service.type=ATTACH_VSCODE"
+      - "devstack.attach_vscode.type=python"
+      - "devstack.attach_vscode.configure.toolsvol=true"
+      - "devstack.attach_vscode.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
   
   go-ramblings:
     image: go-ide:1.0
@@ -398,9 +409,11 @@ services:
     volumes:
       - go-ramblings:/home/project
     labels:
-      - "traefik.http.routers.go-ramblings.rule=PathPrefix(`/go/`)"
-      - "traefik.http.middlewares.go-ramblings.stripprefix.prefixes=/go/"
-      - "traefik.port=3000"
+      - "devstack.service.type=ATTACH_VSCODE"
+      - "devstack.attach_vscode.type=go"
+      - "devstack.attach_vscode.configure.toolsvol=true"
+      - "devstack.attach_vscode.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
   
   java-ramblings:
     image: java-ide:1.0
@@ -409,9 +422,11 @@ services:
     volumes:
       - java-ramblings:/home/project
     labels:
-      - "traefik.http.routers.java-ramblings.rule=PathPrefix(`/java/`)"
-      - "traefik.http.middlewares.java-ramblings.stripprefix.prefixes=/java/"
-      - "traefik.port=3000"
+      - "devstack.service.type=IDE"
+      - "devstack.ide.type=java"
+      - "devstack.ide.configure.toolsvol=true"
+      - "devstack.ide.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
 
   slic:
     image: java-ide:1.0
@@ -420,9 +435,11 @@ services:
     volumes:
       - slic:/home/project
     labels:
-      - "traefik.http.routers.slic.rule=PathPrefix(`/java/`)"
-      - "traefik.http.middlewares.slic.stripprefix.prefixes=/java/"
-      - "traefik.port=3000"
+      - "devstack.service.type=IDE"
+      - "devstack.ide.type=java"
+      - "devstack.ide.configure.toolsvol=true"
+      - "devstack.ide.configure.kubevol=true"
+      - "devstack.ide.configure.gitsshvol=true"
 
   portainer:
     image: portainer/portainer
@@ -433,10 +450,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-    labels:
-      - "traefik.http.routers.portainer.rule=PathPrefix(`/portainer/`)"
-      - "traefik.http.middlewares.portainer.stripprefix.prefixes=/portainer/"
-      - "traefik.port=9000"
 
   adminer:
     image: adminer
@@ -445,12 +458,6 @@ services:
       - 8081:8080
     environment:
       - ADMINER_DEFAULT_SERVER=postgres
-    labels:
-      - "traefik.http.routers.adminer.rule=PathPrefix(`/pgadmin/`)"
-      - "traefik.http.middlewares.adminer.stripprefix.prefixes=/pgadmin/"
-      - "traefik.port=8080"
-    #extra_hosts:
-    #  - "dockerhost:$DOCKERHOST"
   
   postgres:
     image: postgres:9.6

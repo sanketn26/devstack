@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+  gitsshvol:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/gitssh
+    labels:
+      - "devstack.isgitsshvol=true" 
+      - "devstack.volume.type=STORAGE" 
+      - "devstack.storage.type=local_folder"
+      - "devstack.storage.path=$BASEDIR/volumes/gitssh"
+  
+  devstack:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASEDIR/volumes/devstack
+    labels: 
+      - "devstack.volume.type=REPOSITORY"
+      - "devstack.repository.type=git"
+      - "devstack.repository.url=git@github.com:sanketn26/devstack.git"
+      - "devstack.repository.branch=master"
+
+services:
+  devstack:
+    image: python-ide:1.0
+    volumes:
+      - devstack:/home/project
+    labels:
+      - "devstack.service.type=ATTACH_VSCODE"
+      - "devstack.attach_vscode.type=python"
+      - "devstack.ide.configure.gitsshvol=true"
