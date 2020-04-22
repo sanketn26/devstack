@@ -19,8 +19,15 @@ class VolumeObjectHandler(IObjectHandler):
     def parse(self, yamlObject, objectContainer):
         pass
 
+@zope.interface.implementer(IObjectHandler)
+class DefaultObjectHandler(IObjectHandler):
+    
+    def parse(self, yamlObject, objectContainer):
+        pass
+
 
 handlers = {
     "volumes" : VolumeObjectHandler(),
-    "services": ServiceObjectHandler()
+    "services": ServiceObjectHandler(),
+    "default" : DefaultObjectHandler() 
 }
